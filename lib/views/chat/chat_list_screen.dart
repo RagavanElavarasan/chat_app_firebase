@@ -70,12 +70,25 @@ class ChatListScreen extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: chat.lastMessageTime != null
-                  ? Text(
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (chat.lastMessageTime != null)
+                    Text(
                       DateFormat('HH:mm').format(chat.lastMessageTime!),
                       style: const TextStyle(fontSize: 12),
-                    )
-                  : null,
+                    ),
+                  if (!chat.isReadByCurrentUser(currentUserId))
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        Icons.circle,
+                        color: Colors.blue,
+                        size: 10,
+                      ),
+                    ),
+                ],
+              ),
               onTap: () {
                 Get.to(
                   () => ChatScreen(chatId: chat.id, chatName: chatName),

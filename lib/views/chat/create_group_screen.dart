@@ -71,6 +71,17 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             Obx(() => _chatController.isLoading.value
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue, // Professional blue
+                      foregroundColor: Colors.white, // White text
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(12), // Rounded corners
+                      ),
+                      elevation: 3, // Subtle shadow for depth
+                    ),
                     onPressed: _createGroup,
                     child: const Text('Create Group'),
                   )),

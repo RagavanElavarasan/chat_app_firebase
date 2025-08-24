@@ -27,6 +27,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _chatController.loadChatMessages(widget.chatId);
+    _chatController.markChatAsRead(
+        widget.chatId, _authController.currentUser.value!.id);
   }
 
   @override

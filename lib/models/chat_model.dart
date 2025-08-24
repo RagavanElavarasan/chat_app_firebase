@@ -7,6 +7,8 @@ class ChatModel {
   final bool isGroup;
   final String? lastMessage;
   final DateTime? lastMessageTime;
+  final Map<String, bool>
+      readStatus; // Tracks if each participant has read the last message
 
   ChatModel({
     required this.id,
@@ -15,6 +17,7 @@ class ChatModel {
     required this.isGroup,
     this.lastMessage,
     this.lastMessageTime,
+    this.readStatus = const {},
   });
 
   factory ChatModel.fromMap(Map<String, dynamic> map) {
@@ -27,6 +30,7 @@ class ChatModel {
       lastMessageTime: map['lastMessageTime'] != null
           ? (map['lastMessageTime'] as Timestamp).toDate()
           : null,
+      readStatus: Map<String, bool>.from(map['readStatus'] ?? {}),
     );
   }
 
@@ -39,6 +43,11 @@ class ChatModel {
       'lastMessage': lastMessage,
       'lastMessageTime':
           lastMessageTime != null ? Timestamp.fromDate(lastMessageTime!) : null,
+      'readStatus': readStatus,
     };
+  }
+
+  bool isReadByCurrentUser(String userId) {
+    return readStatus[userId] ?? true; // Default to true if no status is found
   }
 }

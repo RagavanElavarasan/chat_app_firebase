@@ -59,4 +59,9 @@ class ChatController extends GetxController {
     isLoading.value = false;
     return chatId;
   }
+
+  // Mark chat as read
+  Future<void> markChatAsRead(String chatId, String userId) async {
+    await _chatService.markChatAsRead(chatId, userId);
+  }
 }

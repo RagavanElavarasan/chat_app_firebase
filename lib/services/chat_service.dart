@@ -59,10 +59,24 @@ class ChatService {
       'timestamp': Timestamp.now(),
     });
 
-    // Update chat last message
+    // Update chat last message and reset read status
+    DocumentSnapshot chatDoc =
+        await _firestore.collection('chats').doc(chatId).get();
+    Map<String, dynamic> chatData = chatDoc.data() as Map<String, dynamic>;
+    Map<String, bool> readStatus =
+        Map<String, bool>.from(chatData['readStatus'] ?? {});
+
+    for (String participant in chatData['participants']) {
+      if (participant != senderId) {
+        readStatus[participant] =
+            false; // Mark as unread for other participants
+      }
+    }
+
     await _firestore.collection('chats').doc(chatId).update({
       'lastMessage': text,
       'lastMessageTime': Timestamp.now(),
+      'readStatus': readStatus,
     });
   }
 
@@ -78,7 +92,7 @@ class ChatService {
       return snapshot.docs.map((doc) {
         return MessageModel.fromMap({
           'id': doc.id,
-          ...doc.data() as Map<String, dynamic>,
+          ...doc.data(),
         });
       }).toList();
     });
@@ -95,7 +109,7 @@ class ChatService {
       return snapshot.docs.map((doc) {
         return ChatModel.fromMap({
           'id': doc.id,
-          ...doc.data() as Map<String, dynamic>,
+          ...doc.data(),
         });
       }).toList();
     });
@@ -108,6 +122,21 @@ class ChatService {
     return ChatModel.fromMap({
       'id': doc.id,
       ...doc.data() as Map<String, dynamic>,
+    });
+  }
+
+  // Mark chat as read
+  Future<void> markChatAsRead(String chatId, String userId) async {
+    DocumentSnapshot chatDoc =
+        await _firestore.collection('chats').doc(chatId).get();
+    Map<String, dynamic> chatData = chatDoc.data() as Map<String, dynamic>;
+    Map<String, bool> readStatus =
+        Map<String, bool>.from(chatData['readStatus'] ?? {});
+
+    readStatus[userId] = true; // Mark as read for the current user
+
+    await _firestore.collection('chats').doc(chatId).update({
+      'readStatus': readStatus,
     });
   }
 }
